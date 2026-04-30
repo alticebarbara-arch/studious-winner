@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Optimum PM Hiring Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F7F6F3;--surface:#fff;--surface2:#F2F1ED;--border:#E4E2DC;--border2:#CCC9C0;
+  --navy:#1B2A4A;--blue:#2D5FA6;--ltblue:#D9E4F5;
+  --text:#1A1917;--text2:#6B7280;--text3:#A09E98;
+  --green-bg:#EAF3DE;--green-t:#2F5A0A;
+  --amber-bg:#FDF0D5;--amber-t:#7A4A05;
+  --red-bg:#FBE9E9;--red-t:#922020;
+  --blue-bg:#E4EEF9;--blue-t:#0F4480;
+  --flag:#E24B4A;
+  --r:8px;--rl:12px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0}
+
+/* ── NAV ── */
+nav{background:var(--navy);display:flex;align-items:center;gap:0;padding:0 28px;height:52px;position:sticky;top:0;z-index:100}
+nav .logo{font-size:13px;font-weight:600;color:#fff;letter-spacing:.06em;margin-right:28px;white-space:nowrap}
+nav .logo span{color:#7CA3D8}
+.nav-tabs{display:flex;gap:0;height:100%}
+.nav-tab{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:#8FAFD4;background:none;border:none;padding:0 18px;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;height:100%;white-space:nowrap}
+.nav-tab:hover{color:#fff}
+.nav-tab.active{color:#fff;border-bottom-color:#5B9CF6}
+
+/* ── PAGES ── */
+.page{display:none;padding:28px 28px 64px;max-width:1160px;margin:0 auto}
+.page.active{display:block}
+
+/* ── PAGE HEADER ── */
+.page-header{margin-bottom:22px}
+.page-header h1{font-size:20px;font-weight:600;color:var(--navy);margin-bottom:4px;letter-spacing:-.01em}
+.page-header p{font-size:13px;color:var(--text2)}
+
+/* ── BANNERS ── */
+.banner{border-radius:var(--r);padding:10px 14px;font-size:13px;line-height:1.5;margin-bottom:16px}
+.banner-green{background:var(--green-bg);border:0.5px solid #97C459;color:var(--green-t)}
+.banner-blue{background:var(--blue-bg);border:0.5px solid #85B7EB;color:var(--blue-t)}
+
+/* ── CONTROLS ── */
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.controls label{font-size:12px;color:var(--text2);white-space:nowrap}
+select,input[type=text],input[type=number]{font-family:'DM Sans',sans-serif;font-size:13px;padding:6px 10px;border-radius:var(--r);border:0.5px solid var(--border2);background:var(--surface);color:var(--text);outline:none}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23A09E98' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+select:focus,input:focus{border-color:var(--blue)}
+
+/* ── LEGEND ── */
+.legend{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--text2);margin-bottom:12px}
+.legend-lbl{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.04em}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;border:0.5px solid var(--border);border-radius:var(--rl);background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:16px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{background:var(--surface2);padding:9px 13px;text-align:left;font-weight:500;color:var(--text2);border-bottom:0.5px solid var(--border);font-size:12px;white-space:nowrap}
+thead th:not(:first-child){text-align:center;min-width:110px}
+thead th:first-child{min-width:180px}
+tbody tr{border-bottom:0.5px solid var(--border);transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--surface2)}
+td{padding:9px 13px;vertical-align:middle}
+.score-cell{text-align:center}
+.pill{display:inline-flex;align-items:center;justify-content:center;border-radius:20px;font-size:12px;font-weight:600;width:32px;height:22px;font-family:'DM Mono',monospace}
+.p-a{background:var(--green-bg);color:var(--green-t)}
+.p-b{background:var(--blue-bg);color:var(--blue-t)}
+.p-c{background:var(--amber-bg);color:var(--amber-t)}
+.p-d{background:var(--red-bg);color:var(--red-t)}
+.score-num{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);margin-top:2px}
+.rank-num{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);min-width:20px;display:inline-block}
+.cand-name-wrap{display:flex;align-items:center;gap:6px}
+.cand-sub{font-size:11px;font-weight:400;color:var(--text2);margin-top:2px;padding-left:26px}
+.cand-best{font-size:11px;color:var(--text3);padding-left:26px;margin-top:1px}
+.flag-dot{width:7px;height:7px;border-radius:50%;background:var(--flag);display:inline-block;flex-shrink:0}
+.del-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;padding:2px 6px;border-radius:4px;line-height:1}
+.del-btn:hover{background:var(--red-bg);color:var(--flag)}
+.empty-msg td{text-align:center;color:var(--text3);padding:24px;font-size:13px}
+
+/* ── ADD FORM ── */
+.add-box{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rl);padding:16px 18px;margin-top:4px}
+.add-box h3{font-size:12px;font-weight:500;color:var(--text2);letter-spacing:.04em;text-transform:uppercase;margin-bottom:12px}
+.add-grid{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+.add-grid input{padding:7px 10px;border-radius:var(--r);border:0.5px solid var(--border2);background:var(--surface2);color:var(--text)}
+.add-grid input::placeholder{color:var(--text3)}
+.f-name,.f-title{flex:2;min-width:120px}
+.f-score{width:70px}
+.add-btn{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;padding:7px 16px;border-radius:var(--r);border:0.5px solid var(--border2);background:var(--navy);color:#fff;cursor:pointer;white-space:nowrap;transition:opacity .15s}
+.add-btn:hover{opacity:.85}
+.score-col-lbls{display:flex;gap:8px;padding-left:calc(2*(120px + 8px));margin-bottom:4px}
+.scl{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;width:70px;text-align:center}
+
+/* ── WEIGHT PANEL ── */
+.weight-panel{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rl);padding:18px 20px;margin-bottom:20px}
+.weight-panel h2{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:4px}
+.weight-panel p{font-size:12px;color:var(--text2);margin-bottom:14px}
+.weight-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.weight-item label{font-size:12px;color:var(--text2);display:block;margin-bottom:4px}
+.weight-item{display:flex;flex-direction:column}
+.weight-row{display:flex;align-items:center;gap:8px}
+.weight-row input[type=range]{flex:1;accent-color:var(--blue);height:4px}
+.weight-val{font-family:'DM Mono',monospace;font-size:12px;color:var(--navy);font-weight:500;min-width:32px;text-align:right}
+.weight-total{font-size:12px;font-weight:500;margin-top:10px;color:var(--text2)}
+.weight-total span{font-family:'DM Mono',monospace;color:var(--navy)}
+.btn-reset{font-family:'DM Sans',sans-serif;font-size:12px;padding:5px 12px;border-radius:var(--r);border:0.5px solid var(--border2);background:var(--surface);color:var(--text2);cursor:pointer;margin-left:10px}
+.btn-reset:hover{background:var(--surface2)}
+
+/* ── GUIDE PAGE ── */
+.role-tabs{display:flex;gap:0;border-bottom:0.5px solid var(--border);margin-bottom:24px}
+.role-tab{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text2);background:none;border:none;padding:10px 20px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+.role-tab:hover{color:var(--navy)}
+.role-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.guide-panel{display:none}
+.guide-panel.active{display:block}
+
+/* ── GUIDE CONTENT ── */
+.guide-title-bar{background:var(--navy);border-radius:var(--rl);padding:18px 22px;margin-bottom:20px;color:#fff}
+.guide-title-bar .eyebrow{font-size:11px;color:#7CA3D8;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.guide-title-bar h2{font-size:22px;font-weight:600;letter-spacing:-.01em;margin-bottom:4px}
+.guide-title-bar p{font-size:13px;color:#8FAFD4}
+
+.guide-section{margin-bottom:22px}
+.guide-section-hdr{font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.06em;padding-bottom:6px;border-bottom:1.5px solid var(--blue);margin-bottom:12px}
+
+.milestone-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:4px}
+.milestone-card{background:var(--surface2);border-radius:var(--r);padding:10px 12px}
+.milestone-card:nth-child(even){background:var(--ltblue)}
+.milestone-card strong{display:block;font-size:12px;color:var(--navy);margin-bottom:3px}
+.milestone-card span{font-size:11px;color:var(--text2);line-height:1.4}
+
+.q-section-label{font-size:12px;font-weight:600;color:#fff;background:var(--blue);padding:7px 12px;border-radius:var(--r);margin:10px 0 6px}
+.q-section-label.ai-label{background:#7C3AED;display:flex;align-items:center;gap:6px}
+.q-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:11px 14px;margin-bottom:6px}
+.q-card.ai-card{border-color:#C4B5FD;background:#FAFAFF}
+.q-card .q-main{font-size:13px;color:var(--text);line-height:1.5;margin-bottom:6px}
+.q-card .q-probe{font-size:12px;color:var(--text2);font-style:italic;line-height:1.4}
+.q-card .q-probe::before{content:"↳ "}
+.q-card .q-note{font-size:11.5px;color:#6D28D9;background:#EDE9FE;border-radius:5px;padding:7px 10px;margin-top:8px;line-height:1.5;border-left:3px solid #7C3AED}
+.q-card .q-note::before{content:"Interviewer: ";font-weight:600}
+
+/* ── WEIGHTED SCORING IN GUIDE ── */
+.scoring-table-wrap{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rl);overflow:hidden}
+.st-header{display:grid;background:var(--navy);color:#fff;font-size:12px;font-weight:500;padding:8px 12px}
+.st-row{display:grid;align-items:center;padding:8px 12px;border-bottom:0.5px solid var(--border);gap:8px}
+.st-row:last-child{border-bottom:none;background:var(--ltblue)}
+.st-row:hover{background:var(--surface2)}
+.st-competency{font-size:13px;color:var(--text)}
+.st-weight{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
+.star-row{display:flex;gap:4px}
+.star{width:26px;height:26px;border-radius:5px;border:0.5px solid var(--border2);background:var(--surface2);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .1s;color:var(--text3)}
+.star.active{background:#FDF0D5;border-color:#EF9F27;color:#BA7517}
+.star:hover{background:var(--ltblue);border-color:var(--blue)}
+.weighted-score-display{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--navy);min-width:36px;text-align:right}
+.total-row .st-competency{font-weight:600;color:var(--navy)}
+.total-score{font-family:'DM Mono',monospace;font-size:18px;font-weight:600;color:var(--navy)}
+
+/* ── CANDIDATE INFO FORM ── */
+.cand-info-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.cand-info-grid .field label{font-size:11px;color:var(--text2);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;font-weight:500}
+.cand-info-grid .field input{width:100%;padding:7px 10px;border:0.5px solid var(--border2);border-radius:var(--r);font-size:13px;background:var(--surface2);color:var(--text)}
+
+/* ── RECOMMENDATION ── */
+.rec-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.rec-option{border:0.5px solid var(--border2);border-radius:var(--r);padding:10px;cursor:pointer;text-align:center;transition:all .15s}
+.rec-option:hover{border-color:var(--blue);background:var(--ltblue)}
+.rec-option.selected{border-color:var(--blue);background:var(--blue);color:#fff}
+.rec-option span{font-size:12px;font-weight:500;display:block}
+.rec-option small{font-size:11px;opacity:.7}
+.notes-area{width:100%;padding:10px;border:0.5px solid var(--border2);border-radius:var(--r);font-size:13px;font-family:'DM Sans',sans-serif;background:var(--surface2);color:var(--text);resize:vertical;min-height:70px}
+
+/* ── UPLOAD PAGE ── */
+.upload-zone{border:2px dashed var(--border2);border-radius:var(--rl);padding:48px 24px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface);margin-bottom:20px;position:relative}
+.upload-zone.drag-over{border-color:var(--blue);background:var(--ltblue)}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-icon{font-size:36px;margin-bottom:12px;color:var(--text3)}
+.upload-zone h3{font-size:15px;font-weight:500;color:var(--navy);margin-bottom:6px}
+.upload-zone p{font-size:13px;color:var(--text2)}
+.upload-zone .fmt{font-size:11px;color:var(--text3);margin-top:8px;font-family:'DM Mono',monospace}
+.queue{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.queue-item{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:12px 16px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px}
+.queue-item.processing{border-color:var(--blue);background:var(--blue-bg)}
+.queue-item.done{border-color:#97C459;background:var(--green-bg)}
+.queue-item.error{border-color:var(--flag);background:var(--red-bg)}
+.qi-left{display:flex;align-items:center;gap:10px}
+.qi-icon{font-size:20px;flex-shrink:0}
+.qi-name{font-size:13px;font-weight:500;color:var(--text)}
+.qi-status{font-size:12px;color:var(--text2);margin-top:2px}
+.qi-right{display:flex;gap:8px;align-items:center}
+.qi-btn{font-family:'DM Sans',sans-serif;font-size:12px;padding:5px 12px;border-radius:var(--r);border:0.5px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;white-space:nowrap}
+.qi-btn:hover{background:var(--surface2)}
+.qi-btn.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+.qi-btn.primary:hover{opacity:.85}
+.qi-btn.danger{color:var(--flag)}
+.qi-btn.danger:hover{background:var(--red-bg);border-color:var(--flag)}
+.parsed-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--rl);padding:18px 20px;margin-top:10px}
+.parsed-card h4{font-size:14px;font-weight:600;color:var(--navy);margin-bottom:14px}
+.parsed-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.parsed-field label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;font-weight:500;display:block;margin-bottom:4px}
+.parsed-field input{width:100%;padding:7px 10px;border:0.5px solid var(--border2);border-radius:var(--r);font-size:13px;background:var(--surface2);color:var(--text)}
+.score-row-parsed{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.score-field label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;font-weight:500;display:block;margin-bottom:4px}
+.score-field input{width:100%;padding:7px 10px;border:0.5px solid var(--border2);border-radius:var(--r);font-size:13px;background:var(--surface2);color:var(--text);text-align:center}
+.rationale-box{background:var(--surface2);border-radius:var(--r);padding:12px 14px;font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:14px;border-left:3px solid var(--blue)}
+.parsed-actions{display:flex;gap:8px}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.progress-bar-wrap{height:3px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden}
+.progress-bar{height:100%;background:var(--blue);border-radius:2px;transition:width .3s}
+.upload-actions{display:flex;gap:10px;margin-bottom:20px}
+
+/* ── PRINT ── */
+@media print{
+  nav,#pg-matrix,#pg-weights,.role-tabs,.controls,.add-box,.banner,.cand-info-grid .field input{display:none!important}
+  .page{display:block!important;padding:0}
+  .guide-panel{display:block!important}
+}
+@media(max-width:640px){
+  .milestone-grid{grid-template-columns:1fr 1fr}
+  .cand-info-grid{grid-template-columns:1fr 1fr}
+  .rec-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">OPTIMUM <span>·</span> PM HIRING HUB</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('matrix')">Candidate Matrix</button>
+    <button class="nav-tab" onclick="showPage('upload')">Upload Resumes</button>
+    <button class="nav-tab" onclick="showPage('weights')">Role Weighting</button>
+    <button class="nav-tab" onclick="showPage('guides')">Interview Guides</button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════ UPLOAD PAGE -->
+<div id="pg-upload" class="page">
+  <div class="page-header">
+    <h1>Upload Resumes</h1>
+    <p>Drop PDFs or Word docs — Claude reads each one, scores it against all 4 roles, and adds it to the matrix for you to review and confirm.</p>
+  </div>
+
+  <div class="upload-zone" id="upload-zone">
+    <input type="file" id="file-input" multiple accept=".pdf,.doc,.docx" onchange="handleFiles(this.files)">
+    <div class="upload-icon">📄</div>
+    <h3>Drop resumes here or click to browse</h3>
+    <p>Supports PDF, DOC, and DOCX files — multiple files at once</p>
+    <div class="fmt">PDF · DOC · DOCX</div>
+  </div>
+
+  <div class="upload-actions">
+    <button class="add-btn" id="process-all-btn" onclick="processAll()" style="display:none">▶ Analyse all queued</button>
+    <button class="qi-btn" onclick="clearQueue()" id="clear-btn" style="display:none">Clear queue</button>
+  </div>
+
+  <div class="queue" id="queue"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ MATRIX PAGE -->
+<div id="pg-matrix" class="page active">
+  <div class="page-header">
+    <h1>Candidate Rankings</h1>
+    <p>15 candidates · 4 open roles · Scores adjust automatically when you change weights</p>
+  </div>
+
+  <div class="banner banner-green">
+    <strong>Review first (verified + highest weighted scores):</strong> Matthew Lupia · Paul Kim · Richard Yumang · Veronica Hernandez.
+    <strong style="color:#922020"> Hold:</strong> Pradeep Reddy Gorla — verify contractor vs. direct employment before advancing.
+  </div>
+
+  <div class="controls">
+    <label>Sort by role:</label>
+    <select id="sort-role" onchange="render()">
+      <option value="mobile">Mobile PM</option>
+      <option value="idm">IDM</option>
+      <option value="vas">VAS</option>
+      <option value="ent">Entertainment</option>
+      <option value="best">Best overall (weighted avg)</option>
+    </select>
+    <label style="margin-left:8px">Filter:</label>
+    <select id="filter-grade" onchange="render()">
+      <option value="all">All candidates</option>
+      <option value="A">A-rated only (75+)</option>
+      <option value="AB">A or B (55+)</option>
+      <option value="verified">Verified only</option>
+      <option value="flag">Flagged for review</option>
+    </select>
+  </div>
+
+  <div class="legend">
+    <span class="legend-lbl">Score key:</span>
+    <span style="display:flex;align-items:center;gap:5px"><span class="pill p-a">A</span> Strong fit (75+)</span>
+    <span style="display:flex;align-items:center;gap:5px"><span class="pill p-b">B</span> Good fit (55–74)</span>
+    <span style="display:flex;align-items:center;gap:5px"><span class="pill p-c">C</span> Weak fit (35–54)</span>
+    <span style="display:flex;align-items:center;gap:5px"><span class="pill p-d">D</span> Poor fit (&lt;35)</span>
+    <span style="display:flex;align-items:center;gap:5px"><span class="flag-dot"></span> Verify before advancing</span>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Candidate</th>
+          <th>Mobile PM<br><span style="font-weight:400;font-size:11px">Agent tools / CX</span></th>
+          <th>IDM<br><span style="font-weight:400;font-size:11px">Auth / identity</span></th>
+          <th>VAS<br><span style="font-weight:400;font-size:11px">Device protect / IoT</span></th>
+          <th>Entertainment<br><span style="font-weight:400;font-size:11px">Video / streaming</span></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="matrix-tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="add-box">
+    <h3>Add a new candidate</h3>
+    <div class="score-col-lbls">
+      <div class="scl">Mobile</div><div class="scl">IDM</div><div class="scl">VAS</div><div class="scl">Ent.</div>
+    </div>
+    <div class="add-grid">
+      <input class="f-name" id="n-name" placeholder="Full name" />
+      <input class="f-title" id="n-title" placeholder="Title / employer" />
+      <input class="f-score" id="n-mobile" type="number" min="0" max="100" placeholder="0–100" />
+      <input class="f-score" id="n-idm"    type="number" min="0" max="100" placeholder="0–100" />
+      <input class="f-score" id="n-vas"    type="number" min="0" max="100" placeholder="0–100" />
+      <input class="f-score" id="n-ent"    type="number" min="0" max="100" placeholder="0–100" />
+      <select id="n-flag" style="min-width:130px">
+        <option value="">Verified</option>
+        <option value="flag">Flag for verification</option>
+      </select>
+      <button class="add-btn" onclick="addCandidate()">+ Add candidate</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ WEIGHTS PAGE -->
+<div id="pg-weights" class="page">
+  <div class="page-header">
+    <h1>Role Weighting</h1>
+    <p>Adjust how much each competency contributes to the score for each role. Changes instantly re-rank the matrix.</p>
+  </div>
+  <div id="weight-panels"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ GUIDES PAGE -->
+<div id="pg-guides" class="page">
+  <div class="page-header">
+    <h1>Interview Guides</h1>
+    <p>Role-specific questions, PM milestone framework, and weighted competency scoring — one page per interview.</p>
+  </div>
+  <div class="role-tabs" id="guide-role-tabs"></div>
+  <div id="guide-panels"></div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════════════════════════════
+
+const CANDIDATES = [
+  {name:"Matthew Lupia",     title:"PM / Cyber Security, Altice USA",       mobile:93,idm:72,vas:70,ent:85,flag:false,verified:true},
+  {name:"Paul Kim",          title:"Sr PM, Verizon",                         mobile:87,idm:60,vas:72,ent:68,flag:false,verified:true},
+  {name:"Richard Yumang",    title:"Sr PM Mobile SDK, Ticketmaster",         mobile:80,idm:82,vas:45,ent:38,flag:false,verified:true},
+  {name:"Jay Berman",        title:"Sr Mgr Program Mgmt, Verizon",           mobile:76,idm:65,vas:55,ent:52,flag:false,verified:true},
+  {name:"Veronica Hernandez",title:"Sr PM, Rogers / Bell Canada",            mobile:68,idm:40,vas:88,ent:80,flag:false,verified:true},
+  {name:"Praveen Raikar",    title:"Sr PM, Born Group",                      mobile:70,idm:45,vas:75,ent:58,flag:false,verified:true},
+  {name:"Mitchell MacSween", title:"PM Intern / Kellogg MMM, Northwestern",  mobile:58,idm:62,vas:42,ent:35,flag:false,verified:true},
+  {name:"Kevin Middleton",   title:"Director PM, GridStrong AI",             mobile:52,idm:68,vas:50,ent:55,flag:false,verified:true},
+  {name:"Jashya Reddi",      title:"AI PM, Atlassian",                       mobile:44,idm:72,vas:38,ent:30,flag:true, verified:false},
+  {name:"Pradeep Reddy Gorla",title:"Sr PM, Norms Tech / Wayfair",          mobile:40,idm:58,vas:42,ent:35,flag:true, verified:false},
+  {name:"Michael Paris",     title:"Lead PM, Mythical Games",                mobile:34,idm:45,vas:30,ent:42,flag:false,verified:true},
+  {name:"Akshay Gangakhedkar",title:"Digital PM, M&T Bank",                 mobile:28,idm:52,vas:32,ent:28,flag:false,verified:true},
+  {name:"Amy Miller",        title:"Digital PM, NewDay (UK)",                mobile:25,idm:40,vas:30,ent:35,flag:false,verified:true},
+  {name:"Vincent Qian",      title:"PM AIoT, Lorex",                        mobile:16,idm:22,vas:55,ent:22,flag:false,verified:true},
+  {name:"Wilfredo Rivera",   title:"Enterprise AE, Frontier Comm.",          mobile:10,idm:8, vas:18,ent:12,flag:false,verified:true},
+];
+
+const ROLES = {
+  mobile:{
+    label:"Mobile PM",
+    subtitle:"Agent Tools · CX Design · Compliance & Credit · Long Island City, NY",
+    milestones:[
+      {label:"Discovery",desc:"User research, journey mapping, pain-point identification"},
+      {label:"Definition",desc:"PRD, user stories, acceptance criteria, OKRs"},
+      {label:"Design & Dev",desc:"Agile sprints, eng/UX partnership, trade-off decisions"},
+      {label:"Launch & GTM",desc:"Channel readiness, care/retail enablement, phased rollout"},
+      {label:"Measurement",desc:"KPI tracking, A/B testing, conversion & churn analysis"},
+    ],
+    competencies:[
+      "Mobile product ownership (iOS/Android lifecycle)",
+      "Compliance & regulatory feature delivery",
+      "Business case / ROI modelling",
+      "Cross-functional stakeholder management",
+      "Data-driven experimentation & KPI ownership",
+      "Telecom / connectivity domain knowledge",
+      "Executive communication & presentation",
+    ],
+    weights:[20,20,15,15,15,10,5],
+    qSections:[
+      {title:"Discovery — understanding the customer & problem",qs:[
+        {q:"Walk me through how you've mapped a mobile customer journey end-to-end. What data sources did you use?",f:"How did you translate the journey into prioritised product requirements?"},
+        {q:"Tell me about a time you identified a compliance or credit risk inside a mobile product flow. How did you balance UX with regulatory constraints?",f:"What was the business impact of getting it right?"},
+      ]},
+      {title:"Definition — strategy, roadmap & business cases",qs:[
+        {q:"Describe a business case you built for a mobile feature. How did you quantify revenue impact, churn mitigation, or cost reduction?",f:"How did you defend it to senior stakeholders?"},
+        {q:"How do you prioritise between compliance-mandatory work and revenue-driving features on a constrained roadmap?",f:"Give me a real example."},
+      ]},
+      {title:"Design & delivery — cross-functional execution",qs:[
+        {q:"Describe a complex mobile feature you took from PRD to production. Who were the key partners and what were the biggest blockers?",f:"How did you keep engineering, legal, and CX aligned?"},
+        {q:"Tell me about a time your sprint plan changed due to a regulatory or technical constraint. How did you re-scope and communicate?",f:"What would you do differently?"},
+      ]},
+      {title:"Launch — GTM & channel enablement",qs:[
+        {q:"How have you enabled call-centre agents or retail staff to sell or support a new mobile feature? What did 'done' look like?",f:"How did you measure adoption by internal channels?"},
+      ]},
+      {title:"Measurement — KPIs, experimentation & iteration",qs:[
+        {q:"What KPIs do you use to evaluate a mobile compliance or credit feature post-launch? Walk me through a real example.",f:"How did you act on the data?"},
+        {q:"Describe an A/B test you designed for a mobile flow. What was the hypothesis, how did you size it, and what did you learn?",f:""},
+      ]},
+      {title:"Situational — Optimum context",qs:[
+        {q:"Optimum is expanding its 5G footprint. How would you think about building a credit-risk feature into the mobile acquisition flow?",f:"What would your first 30 days look like?"},
+      ]},
+      {title:"⚡ Authenticity checks — requires lived experience",tag:"ai",qs:[
+        {q:"Tell me the name of the engineer or tech lead you worked most closely with on your last mobile feature. What was one specific technical decision they pushed back on, and what was your counter-argument?",f:"What did you ultimately agree on, and do you think it was the right call in hindsight?",note:"AI generates plausible-sounding answers here. Listen for: a real name, a specific technical debate (not generic 'we disagreed on scope'), and genuine uncertainty about the outcome. Vague or overly polished answers are a flag."},
+        {q:"Walk me through a specific moment a stakeholder rejected your roadmap priority. What exactly did they say, and what did you say back?",f:"Did you win that argument? If not, what happened to the feature?",note:"Look for specificity — a real meeting, a real person, an actual objection. AI-coached answers tend to be conflict-free or resolve neatly. Real ones are messier."},
+        {q:"Give me a metric from your last role that looked great on paper but you knew was misleading. Why was it misleading and did you ever surface that?",f:"What happened when you did — or why didn't you?",note:"This tests self-awareness and honesty. AI coaching produces heroic narratives. Real PMs know which numbers were gamed or lucky."},
+        {q:"What's a product decision you made in the last 18 months that you'd make differently now? Walk me through the original decision, then the moment you realised it was wrong.",f:"What specifically changed your mind — data, a conversation, a failure?",note:"Strong candidates have genuine regrets with specifics. Candidates over-prepared with AI tend to give 'growth mindset' answers that sound like LinkedIn posts."},
+      ]},
+    ]
+  },
+  idm:{
+    label:"IDM",
+    subtitle:"Authentication · Authorization · User Lifecycle · Long Island City, NY",
+    milestones:[
+      {label:"Discovery",desc:"Auth friction mapping, security threat modelling, user segmentation"},
+      {label:"Definition",desc:"PRD for MFA/passwordless, RBAC, SSO, account recovery flows"},
+      {label:"Design & Dev",desc:"Security/UX/Legal alignment, platform scalability decisions"},
+      {label:"Launch & GTM",desc:"Phased rollout, partner onboarding, comms to B2C/B2B segments"},
+      {label:"Measurement",desc:"Auth success rate, fraud rate, adoption, MTTR, NPS"},
+    ],
+    competencies:[
+      "Identity & access management concepts (SSO, MFA, RBAC, OAuth)",
+      "Security/UX trade-off decision making",
+      "Platform scalability & API-first thinking",
+      "Cross-functional alignment (Security, Legal, UX, Eng)",
+      "KPI definition & post-launch monitoring",
+      "Agile / product ownership rigour",
+      "Communication of technical concepts to non-technical stakeholders",
+    ],
+    weights:[25,20,15,15,10,10,5],
+    qSections:[
+      {title:"Discovery — identity landscape & user needs",qs:[
+        {q:"How have you mapped authentication friction across a multi-segment product (B2C, mobile, B2B)? What did you learn?",f:"How did you translate that into a prioritised roadmap?"},
+        {q:"Describe a time you had to balance security requirements with user experience in an identity flow. What trade-offs did you make?",f:"How did you bring legal and security along?"},
+      ]},
+      {title:"Definition — IDM product strategy",qs:[
+        {q:"Walk me through how you've owned an MFA, passwordless, or SSO initiative from requirements through acceptance criteria.",f:"What were the edge cases that surprised you?"},
+        {q:"How do you write user stories for identity features where the 'user' includes developers, end-customers, and internal ops teams?",f:"Show me an example if you can."},
+      ]},
+      {title:"Design & delivery — security, UX & platform",qs:[
+        {q:"Tell me about an authentication platform migration you led or contributed to. How did you manage risk and rollback planning?",f:"What metrics did you watch in the first 48 hours?"},
+        {q:"How do you work with a security team that has veto power? Give me a real example of a disagreement and how you resolved it.",f:""},
+      ]},
+      {title:"Launch & measurement",qs:[
+        {q:"What KPIs do you use to declare an IDM feature 'healthy' after launch? What thresholds trigger a rollback?",f:"Walk me through a real post-launch debrief."},
+        {q:"Describe how you'd phase a passwordless rollout across 4M+ Optimum customers. What's your sequencing logic?",f:"How would you handle legacy devices that can't support the new flow?"},
+      ]},
+      {title:"Situational — Optimum context",qs:[
+        {q:"Optimum serves residential, mobile, and business customers under one identity umbrella. How would you design a unified auth strategy that doesn't break existing integrations?",f:"Where would you start in the first 90 days?"},
+      ]},
+      {title:"⚡ Authenticity checks — requires lived experience",tag:"ai",qs:[
+        {q:"Tell me about a specific auth bug or incident that happened after a launch you owned. What was the failure mode, how long did it take to detect, and who called you first?",f:"Walk me through the next two hours.",note:"Real incidents have chaotic timelines, specific people, and a moment of 'oh no.' AI-prepared answers describe incident response frameworks, not incidents. If they can't name a specific failure, probe harder."},
+        {q:"When you've handed off a security requirement to engineering, what's a specific example where the implementation came back wrong — not bad code, but a misunderstood requirement? What was the gap?",f:"How did you change how you write requirements after that?",note:"This tests whether they've actually written identity requirements before. Look for a specific miscommunication (e.g. 'they implemented MFA for new sign-ups but not password resets'). Generic process answers suggest they haven't."},
+        {q:"What's a concession you made to the security team that you still think was the wrong call? Why did you make it, and why do you think it was wrong?",f:"Did it ever come back to bite you?",note:"Tests whether they can hold a real opinion and defend it. AI coaching produces answers where the security team was always right. Real PMs have genuine unresolved disagreements."},
+        {q:"You mentioned [pull a specific claim from their resume — e.g. 'reducing auth drop-off by 30%']. Walk me back to the moment before you had that number. What was the original hypothesis, what did you expect, and what did the data actually show first?",f:"What changed between your first read of the data and the final number you reported?",note:"This is the hardest AI-detection question. Ask them to reconstruct the discovery process. Anyone who rehearsed the metric can cite it. Almost no one can reconstruct the messy data story behind it unless they lived it."},
+      ]},
+    ]
+  },
+  vas:{
+    label:"VAS",
+    subtitle:"Device Protection · Smart Home / IoT · Total Care · Long Island City, NY",
+    milestones:[
+      {label:"Discovery",desc:"Market research, competitive benchmarking, customer interviews"},
+      {label:"Definition",desc:"Product strategy, pricing/packaging, vendor requirements, PRD"},
+      {label:"Design & Dev",desc:"Vendor management, GTM planning, ops & care readiness"},
+      {label:"Launch",desc:"Channel enablement, subscriber acquisition, adoption campaigns"},
+      {label:"Lifecycle Mgmt",desc:"ARPU, churn, NPS, upsell/cross-sell, sunset decisions"},
+    ],
+    competencies:[
+      "VAS / subscription product lifecycle management",
+      "Pricing, packaging & attach rate strategy",
+      "Third-party vendor management",
+      "Customer research & market validation",
+      "Channel enablement (care, retail, digital)",
+      "Financial KPIs (ARPU, churn, NPS)",
+      "Broadband / telecom domain knowledge",
+    ],
+    weights:[20,15,15,15,15,15,5],
+    qSections:[
+      {title:"Discovery — market & customer",qs:[
+        {q:"Tell me about a VAS or subscription product you launched. How did you validate demand before committing to build?",f:"What customer research methods did you use?"},
+        {q:"How do you track competitive positioning for a VAS portfolio? Walk me through your framework.",f:"What signals tell you a competitor is gaining ground?"},
+      ]},
+      {title:"Definition — strategy & pricing",qs:[
+        {q:"Describe a time you developed pricing or packaging for a value-added service. How did you balance attach rate against margin?",f:"What data informed the decision?"},
+        {q:"How have you written product requirements for a service that depends heavily on a third-party vendor (e.g. device protection, tech support)?",f:"How did you manage vendor delivery risk?"},
+      ]},
+      {title:"Delivery — vendor & cross-functional",qs:[
+        {q:"Walk me through managing a vendor relationship for a consumer service product. What did your governance model look like?",f:"When did you escalate vs. solve at working level?"},
+        {q:"Describe how you've enabled care and retail teams to sell a complex VAS. What materials and training did you create?",f:"How did you measure channel adoption?"},
+      ]},
+      {title:"Lifecycle & measurement",qs:[
+        {q:"What KPIs do you track for a VAS portfolio? How do you decide when to invest more vs. sunset a product?",f:"Walk me through a real lifecycle decision."},
+        {q:"Tell me about a time you improved subscriber retention for a VAS. What levers did you pull and what was the outcome?",f:""},
+      ]},
+      {title:"Situational — Optimum context",qs:[
+        {q:"Optimum's Total Care and Service Protection products need a refresh. How would you approach diagnosing what's working and what isn't, and where would you focus first?",f:"What new VAS categories would you explore given broadband + mobile convergence?"},
+      ]},
+      {title:"⚡ Authenticity checks — requires lived experience",tag:"ai",qs:[
+        {q:"Tell me about a vendor who missed a delivery milestone on a product you owned. What did they tell you, what did you tell your leadership, and what was the actual root cause?",f:"What leverage did you have and did you use it?",note:"Vendor failures are messy and political. AI-prepared answers describe governance frameworks. Real ones involve awkward conversations, missed SLAs, and a specific moment of deciding how much to escalate. Listen for that specificity."},
+        {q:"Walk me through the attach rate on your last VAS launch — not the final number, but the first read you got. Was it what you expected? What did you do in the first week when you saw it?",f:"What levers did you pull and which ones did nothing?",note:"Candidates who built the product know the launch was messy. The first week of attach data is almost always a surprise. AI-prepared candidates describe what they 'would' do. Real ones can tell you what they actually did, including what didn't work."},
+        {q:"Describe the worst customer complaint you personally read about a VAS you owned. What was the complaint, and what did you do about it?",f:"Did it change the product?",note:"This forces specificity and emotional recall. AI coaching produces abstract 'we had NPS issues' answers. Real PMs remember a specific customer verbatim — or a support ticket that stuck with them."},
+        {q:"What's a pricing or packaging decision you made that you'd walk back if you could? Why was it the wrong call and who pushed back on it at the time that you didn't listen to?",f:"What stopped you from changing it sooner?",note:"Tests genuine reflection vs. rehearsed humility. AI-coaching produces growth-mindset answers. Real PMs name a person who was right and explain why they ignored them."},
+      ]},
+    ]
+  },
+  ent:{
+    label:"Entertainment",
+    subtitle:"Video Experience · Streaming · Subscription Management · Long Island City, NY",
+    milestones:[
+      {label:"Discovery",desc:"Viewer behaviour analysis, content gap research, CPE feedback"},
+      {label:"Definition",desc:"PRD for video UX, billing on behalf of, CPE features, OKRs"},
+      {label:"Design & Dev",desc:"Agile ownership, eng/content/ops alignment, defect gating"},
+      {label:"Launch & GTM",desc:"Alpha/beta testing, care & retail enablement, subscriber comms"},
+      {label:"Measurement",desc:"Engagement, churn, NPS, billing accuracy, CPE health KPIs"},
+    ],
+    competencies:[
+      "Video product lifecycle (linear, VOD, streaming)",
+      "Agile product ownership & defect gating",
+      "Subscription billing & D2C app integration",
+      "CPE / device experience knowledge",
+      "GTM & channel enablement (care, retail)",
+      "Data-driven KPI ownership (engagement, churn)",
+      "Cross-functional alignment (content, eng, ops, finance)",
+    ],
+    weights:[20,15,15,10,15,15,10],
+    qSections:[
+      {title:"Discovery — viewer & market",qs:[
+        {q:"How have you used viewer behaviour data (engagement, drop-off, content discovery) to shape a video product roadmap?",f:"What was the most surprising insight and what did you do with it?"},
+        {q:"Walk me through how you've benchmarked a video experience against D2C streaming competitors. What dimensions did you evaluate?",f:"How did you turn that into a prioritised gap list?"},
+      ]},
+      {title:"Definition — product strategy & PRD",qs:[
+        {q:"Describe an entertainment product initiative you owned from business case through acceptance criteria. What were the key stakeholder debates?",f:"How did you arbitrate competing priorities between engineering, content, and finance?"},
+        {q:"Tell me about your experience with subscription billing models in video — Billing on Behalf Of, D2C app billing, or similar. What are the hardest edge cases?",f:"How did you handle them in requirements?"},
+      ]},
+      {title:"Design & delivery — agile product ownership",qs:[
+        {q:"Describe how you run defect triage during a video product release. How do you assign gating dispositions and communicate to stakeholders?",f:"Give me an example of a go/no-go decision you had to make."},
+        {q:"How have you managed a CPE (set-top box, streaming device) feature alongside a software-side feature that needed to stay in sync? What broke and how did you fix it?",f:""},
+      ]},
+      {title:"Launch & measurement",qs:[
+        {q:"How do you ensure care centres and retail stores are ready to support a new video experience before launch? What's on your GTM checklist?",f:"How have you handled a launch where channel readiness wasn't complete?"},
+        {q:"What KPIs do you track for a linear + streaming video product? How do you separate platform health from content performance?",f:"Walk me through a post-launch review you led."},
+      ]},
+      {title:"Situational — Optimum context",qs:[
+        {q:"Optimum is managing both a legacy linear video base and growth in streaming. How would you approach the video experience roadmap to serve both segments without fragmenting the team?",f:"What's the first thing you'd ship and why?"},
+      ]},
+      {title:"⚡ Authenticity checks — requires lived experience",tag:"ai",qs:[
+        {q:"Tell me about a specific defect you approved shipping despite knowing it wasn't fixed. What was the defect, what was your reasoning, and what happened after launch?",f:"Would you make the same call again?",note:"Go/no-go decisions with known defects are a universal PM experience. AI coaching produces clean release narratives. Real ones involve a bug you shipped with, a reason you justified it, and sometimes a consequence you lived with. Vague or perfect answers are a flag."},
+        {q:"Walk me through the last time a video feature you owned caused a care centre spike. What were the call drivers, when did you find out, and what was the first thing you actually did — not what the process says to do?",f:"How long did the spike last and what fixed it?",note:"Anyone who's owned a video product has lived through a care spike. The question 'what did you actually do first' bypasses the process answer and gets to real behaviour. AI answers describe escalation paths. Real ones start with 'I called [name] immediately.'"},
+        {q:"Tell me about a content or feature that tested well in beta but flopped with subscribers at scale. What did your beta data say versus what actually happened?",f:"What was the explanation and how did you explain it to leadership?",note:"Beta/launch gaps are painful and memorable. AI-prepared candidates describe A/B testing best practices. Real PMs remember the specific product, the specific disappointment, and the specific conversation with a frustrated VP."},
+        {q:"What's a CPE or streaming platform constraint that you hit during a project that no one warned you about and wasn't in any documentation? How did you find out about it?",f:"How did it change the delivery plan?",note:"CPE work is full of undocumented constraints. This is nearly impossible to answer convincingly without real experience. Listen for device-specific details (firmware versions, undocumented API limits, hardware buffer sizes). Generic answers suggest they haven't done the work."},
+      ]},
+    ]
+  }
+};
+
+// Interview scoring state: roleKey -> competencyIndex -> score (1-5)
+const interviewScores = {mobile:{},idm:{},vas:{},ent:{}};
+const interviewRec = {mobile:'',idm:'',vas:'',ent:''};
+const interviewNotes = {mobile:'',idm:'',vas:'',ent:''};
+
+// ══════════════════════════════════════════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════════════════════════════════════════
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('pg-'+id).classList.add('active');
+  document.querySelectorAll('.nav-tab')[['matrix','upload','weights','guides'].indexOf(id)].classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// UPLOAD & PARSE
+// ══════════════════════════════════════════════════════════════════════════════
+
+const uploadQueue = []; // {id, file, state:'pending'|'processing'|'done'|'error', result}
+let queueIdCounter = 0;
+
+// Drag-and-drop wiring
+const uploadZone = document.getElementById('upload-zone');
+uploadZone.addEventListener('dragover', e=>{ e.preventDefault(); uploadZone.classList.add('drag-over'); });
+uploadZone.addEventListener('dragleave', ()=>uploadZone.classList.remove('drag-over'));
+uploadZone.addEventListener('drop', e=>{ e.preventDefault(); uploadZone.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); });
+
+function handleFiles(files){
+  [...files].forEach(file=>{
+    if(!file.name.match(/\.(pdf|doc|docx)$/i)) return;
+    const id = ++queueIdCounter;
+    uploadQueue.push({id, file, state:'pending', result:null});
+  });
+  renderQueue();
+  document.getElementById('process-all-btn').style.display = uploadQueue.some(i=>i.state==='pending') ? '' : 'none';
+  document.getElementById('clear-btn').style.display = uploadQueue.length ? '' : 'none';
+}
+
+function clearQueue(){
+  uploadQueue.length = 0;
+  renderQueue();
+  document.getElementById('process-all-btn').style.display = 'none';
+  document.getElementById('clear-btn').style.display = 'none';
+}
+
+function renderQueue(){
+  const container = document.getElementById('queue');
+  container.innerHTML = '';
+  if(!uploadQueue.length){
+    container.innerHTML = '';
+    return;
+  }
+  uploadQueue.forEach(item=>{
+    const div = document.createElement('div');
+    div.className = 'queue-item ' + (item.state==='processing'?'processing':item.state==='done'?'done':item.state==='error'?'error':'');
+    div.id = 'qi-'+item.id;
+
+    const icon = item.state==='processing'?'<div class="spinner"></div>'
+      : item.state==='done'?'✅'
+      : item.state==='error'?'❌'
+      : '📄';
+
+    const statusText = item.state==='processing'?'Analysing with Claude…'
+      : item.state==='done'?'Analysis complete — review below'
+      : item.state==='error'?'Failed to analyse — try again'
+      : 'Queued';
+
+    const rightBtns = item.state==='pending'
+      ? `<button class="qi-btn primary" onclick="processOne(${item.id})">Analyse</button>
+         <button class="qi-btn danger" onclick="removeFromQueue(${item.id})">Remove</button>`
+      : item.state==='error'
+      ? `<button class="qi-btn" onclick="processOne(${item.id})">Retry</button>
+         <button class="qi-btn danger" onclick="removeFromQueue(${item.id})">Remove</button>`
+      : item.state==='done'
+      ? `<button class="qi-btn danger" onclick="removeFromQueue(${item.id})">Remove</button>`
+      : '';
+
+    div.innerHTML = `
+      <div class="qi-left">
+        <div class="qi-icon">${icon}</div>
+        <div>
+          <div class="qi-name">${item.file.name}</div>
+          <div class="qi-status">${statusText}</div>
+          ${item.state==='processing'?'<div class="progress-bar-wrap"><div class="progress-bar" style="width:60%" id="pb-'+item.id+'"></div></div>':''}
+        </div>
+      </div>
+      <div class="qi-right">${rightBtns}</div>`;
+    container.appendChild(div);
+
+    // Render parsed result card below queue item if done
+    if(item.state==='done' && item.result){
+      const card = document.createElement('div');
+      card.className = 'parsed-card';
+      card.id = 'pc-'+item.id;
+      card.innerHTML = buildParsedCard(item);
+      container.appendChild(card);
+    }
+  });
+}
+
+function removeFromQueue(id){
+  const idx = uploadQueue.findIndex(i=>i.id===id);
+  if(idx>-1) uploadQueue.splice(idx,1);
+  renderQueue();
+  const anyPending = uploadQueue.some(i=>i.state==='pending');
+  document.getElementById('process-all-btn').style.display = anyPending ? '' : 'none';
+  document.getElementById('clear-btn').style.display = uploadQueue.length ? '' : 'none';
+}
+
+async function processAll(){
+  const pending = uploadQueue.filter(i=>i.state==='pending');
+  for(const item of pending){
+    await processOne(item.id);
+  }
+  document.getElementById('process-all-btn').style.display = 'none';
+}
+
+// ─── PROXY CONFIG ────────────────────────────────────────────────────────────
+// After deploying server.js, replace the URL below with your server's URL.
+// e.g. "https://optimum-resume-proxy.up.railway.app"
+const PROXY_URL = "https://optimum-resume-proxy.onrender.com";
+// ─────────────────────────────────────────────────────────────────────────────
+
+async function processOne(id){
+  const item = uploadQueue.find(i=>i.id===id);
+  if(!item) return;
+
+  // Check proxy is configured
+  if(!PROXY_URL || PROXY_URL === 'YOUR_SERVER_URL_HERE'){
+    item.state = 'error';
+    item.errorMsg = 'Proxy server not configured. See README.md for setup instructions.';
+    renderQueue();
+    showProxyWarning();
+    return;
+  }
+
+  item.state = 'processing';
+  renderQueue();
+
+  try {
+    const base64 = await fileToBase64(item.file);
+    const isPdf  = item.file.name.match(/\.pdf$/i);
+
+    const content = [
+      {
+        type: 'document',
+        source: {
+          type: 'base64',
+          media_type: isPdf
+            ? 'application/pdf'
+            : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          data: base64
+        }
+      },
+      {
+        type: 'text',
+        text: `You are a senior recruiter at Optimum (Altice USA). Analyse this resume and score the candidate for four open PM roles.
+
+Return ONLY valid JSON — no markdown fences, no preamble. Use this exact schema:
+{
+  "name": "Full Name",
+  "title": "Current Role, Current Employer",
+  "mobile": 0,
+  "idm": 0,
+  "vas": 0,
+  "ent": 0,
+  "flag": false,
+  "rationale": "2-3 sentences explaining the scores and any verification concerns",
+  "summary": "1 sentence candidate summary"
+}
+
+Scoring guide (0–100):
+- mobile: Optimum Mobile PM — agent tools, CX design, compliance/credit, telecom mobile experience
+- idm: Identity Management PM — MFA, passwordless, SSO, OAuth, RBAC, auth platform ownership
+- vas: Value-Added Services PM — device protection, smart home/IoT, VAS lifecycle, vendor management
+- ent: Entertainment PM — IPTV, video, streaming, VOD, D2C billing, CPE, content lifecycle
+
+flag:true if: staffing firm placement, timeline gaps, overlapping roles, or implausibly high metrics.
+Score honestly — most candidates score 40–70. Reserve 85+ for exceptional domain match.`
+      }
+    ];
+
+    const response = await fetch(`${PROXY_URL.replace(/\/$/, '')}/parse-resume`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content }]
+      })
+    });
+
+    if(!response.ok){
+      const err = await response.json().catch(()=>({error:'Unknown server error'}));
+      throw new Error(err.error || `Server returned ${response.status}`);
+    }
+
+    const data = await response.json();
+    const text = data.content?.find(b=>b.type==='text')?.text || '';
+    const parsed = JSON.parse(text.replace(/```json|```/g,'').trim());
+
+    ['mobile','idm','vas','ent'].forEach(k=>{ parsed[k] = Math.min(100,Math.max(0,parseInt(parsed[k])||0)); });
+    parsed.verified = !parsed.flag;
+    if(!parsed.name) parsed.name = item.file.name.replace(/\.(pdf|docx?)$/i,'');
+
+    item.result = parsed;
+    item.state = 'done';
+  } catch(err) {
+    console.error(err);
+    item.state = 'error';
+    item.errorMsg = err.message;
+  }
+
+  renderQueue();
+  document.getElementById('process-all-btn').style.display = uploadQueue.some(i=>i.state==='pending') ? '' : 'none';
+}
+
+function showProxyWarning(){
+  const existing = document.getElementById('proxy-warning');
+  if(existing) return;
+  const div = document.createElement('div');
+  div.id = 'proxy-warning';
+  div.className = 'banner banner-amber';
+  div.style.marginBottom = '14px';
+  div.innerHTML = `<strong>Proxy server not configured.</strong> To enable resume uploads for your whole team,
+    deploy <code>server.js</code> from the download below, then update <code>PROXY_URL</code> in this HTML file.
+    See <strong>README.md</strong> for step-by-step instructions. In the meantime, resumes can be
+    added manually using the form at the bottom of the Candidate Matrix.`;
+  const uploadPage = document.getElementById('pg-upload');
+  uploadPage.insertBefore(div, uploadPage.children[1]);
+}
+
+function buildParsedCard(item){
+  const r = item.result;
+  const scoreColor = s => s>=75?'var(--green-t)':s>=55?'var(--blue-t)':s>=35?'var(--amber-t)':'var(--red-t)';
+  const scoreBg    = s => s>=75?'var(--green-bg)':s>=55?'var(--blue-bg)':s>=35?'var(--amber-bg)':'var(--red-bg)';
+
+  return `
+    <h4>📋 Parsed Result — review and confirm before adding to matrix</h4>
+    <div class="parsed-grid">
+      <div class="parsed-field">
+        <label>Full name</label>
+        <input type="text" id="pf-name-${item.id}" value="${esc(r.name)}">
+      </div>
+      <div class="parsed-field">
+        <label>Current title / employer</label>
+        <input type="text" id="pf-title-${item.id}" value="${esc(r.title)}">
+      </div>
+    </div>
+    <div class="score-row-parsed">
+      ${['mobile','idm','vas','ent'].map((k,i)=>`
+        <div class="score-field">
+          <label>${['Mobile PM','IDM','VAS','Entertainment'][i]}</label>
+          <input type="number" min="0" max="100" id="pf-${k}-${item.id}" value="${r[k]}"
+            style="color:${scoreColor(r[k])};background:${scoreBg(r[k])};font-weight:600">
+        </div>`).join('')}
+    </div>
+    ${r.rationale ? `<div class="rationale-box">💡 ${esc(r.rationale)}</div>` : ''}
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px;cursor:pointer">
+        <input type="checkbox" id="pf-flag-${item.id}" ${r.flag?'checked':''}>
+        Flag for verification
+      </label>
+    </div>
+    <div class="parsed-actions">
+      <button class="add-btn" onclick="confirmAdd(${item.id})">✓ Add to matrix</button>
+      <button class="qi-btn" onclick="removeFromQueue(${item.id})">Discard</button>
+    </div>`;
+}
+
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+function confirmAdd(id){
+  const item = uploadQueue.find(i=>i.id===id);
+  if(!item) return;
+
+  const name  = document.getElementById(`pf-name-${id}`).value.trim();
+  const title = document.getElementById(`pf-title-${id}`).value.trim();
+  const mobile= Math.min(100,Math.max(0,parseInt(document.getElementById(`pf-mobile-${id}`).value)||0));
+  const idm   = Math.min(100,Math.max(0,parseInt(document.getElementById(`pf-idm-${id}`).value)||0));
+  const vas   = Math.min(100,Math.max(0,parseInt(document.getElementById(`pf-vas-${id}`).value)||0));
+  const ent   = Math.min(100,Math.max(0,parseInt(document.getElementById(`pf-ent-${id}`).value)||0));
+  const flag  = document.getElementById(`pf-flag-${id}`).checked;
+
+  if(!name){ alert('Please enter a candidate name.'); return; }
+
+  CANDIDATES.push({ name, title, mobile, idm, vas, ent, flag, verified: !flag });
+  render(); // re-render matrix
+
+  // Mark as confirmed in queue
+  removeFromQueue(id);
+
+  // Flash success banner on matrix
+  showPage('matrix');
+  const banner = document.createElement('div');
+  banner.className = 'banner banner-green';
+  banner.style.marginBottom = '12px';
+  banner.innerHTML = `<strong>${name}</strong> added to the matrix successfully.`;
+  const matrixPage = document.getElementById('pg-matrix');
+  matrixPage.insertBefore(banner, matrixPage.children[1]);
+  setTimeout(()=>banner.remove(), 4000);
+}
+
+function fileToBase64(file){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload  = ()=> resolve(reader.result.split(',')[1]);
+    reader.onerror = ()=> reject(new Error('Failed to read file'));
+    reader.readAsDataURL(file);
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// SCORING HELPERS
+// ══════════════════════════════════════════════════════════════════════════════
+function grade(s){return s>=75?'A':s>=55?'B':s>=35?'C':'D'}
+function pillCls(s){return s>=75?'p-a':s>=55?'p-b':s>=35?'p-c':'p-d'}
+
+function roleScore(c, roleKey){
+  const role = ROLES[roleKey];
+  const rawScore = c[roleKey];
+  // Apply weights: each competency weight is a % of the raw score contribution
+  // For the matrix, we still use the base scores but apply a simple modifier
+  // based on how the weights skew the "importance" of this role score
+  return rawScore; // matrix shows raw; weighted scoring is in guide page
+}
+
+function bestFit(c){
+  const entries = Object.keys(ROLES).map(k=>([ROLES[k].label, c[k]]));
+  return entries.sort((a,b)=>b[1]-a[1])[0][0];
+}
+
+function sortVal(c, role){
+  if(role==='best') return (c.mobile+c.idm+c.vas+c.ent)/4;
+  return c[role]||0;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// MATRIX RENDER
+// ══════════════════════════════════════════════════════════════════════════════
+function render(){
+  const role   = document.getElementById('sort-role').value;
+  const filter = document.getElementById('filter-grade').value;
+
+  let data = [...CANDIDATES];
+  if(filter==='A')        data=data.filter(c=>Math.max(c.mobile,c.idm,c.vas,c.ent)>=75);
+  if(filter==='AB')       data=data.filter(c=>Math.max(c.mobile,c.idm,c.vas,c.ent)>=55);
+  if(filter==='verified') data=data.filter(c=>c.verified);
+  if(filter==='flag')     data=data.filter(c=>c.flag);
+  data.sort((a,b)=>sortVal(b,role)-sortVal(a,role));
+
+  const tbody = document.getElementById('matrix-tbody');
+  tbody.innerHTML='';
+
+  if(!data.length){
+    tbody.innerHTML='<tr class="empty-msg"><td colspan="6">No candidates match the current filter.</td></tr>';
+    return;
+  }
+
+  data.forEach((c,i)=>{
+    const idx = CANDIDATES.indexOf(c);
+    const tr = document.createElement('tr');
+    const sc = (s)=>`<td class="score-cell"><div><span class="pill ${pillCls(s)}">${grade(s)}</span></div><div class="score-num">${s}</div></td>`;
+    tr.innerHTML=`
+      <td>
+        <div class="cand-name-wrap">
+          <span class="rank-num">${String(i+1).padStart(2,'0')}</span>
+          ${c.name}
+          ${c.flag?'<span class="flag-dot" title="Verify before advancing"></span>':''}
+        </div>
+        <div class="cand-sub">${c.title}</div>
+        <div class="cand-best">Best fit: ${bestFit(c)}</div>
+      </td>
+      ${sc(c.mobile)}${sc(c.idm)}${sc(c.vas)}${sc(c.ent)}
+      <td style="text-align:center">
+        <button class="del-btn" onclick="removeCand(${idx})" title="Remove">×</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function removeCand(idx){
+  if(confirm('Remove '+CANDIDATES[idx].name+'?')){CANDIDATES.splice(idx,1);render();}
+}
+
+function addCandidate(){
+  const name=document.getElementById('n-name').value.trim();
+  if(!name){document.getElementById('n-name').focus();return;}
+  const clamp=v=>Math.min(100,Math.max(0,parseInt(v)||0));
+  CANDIDATES.push({
+    name, title:document.getElementById('n-title').value.trim(),
+    mobile:clamp(document.getElementById('n-mobile').value),
+    idm:clamp(document.getElementById('n-idm').value),
+    vas:clamp(document.getElementById('n-vas').value),
+    ent:clamp(document.getElementById('n-ent').value),
+    flag:document.getElementById('n-flag').value==='flag',
+    verified:document.getElementById('n-flag').value!=='flag'
+  });
+  ['n-name','n-title','n-mobile','n-idm','n-vas','n-ent'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('n-flag').value='';
+  render();
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// WEIGHTS PAGE
+// ══════════════════════════════════════════════════════════════════════════════
+function buildWeightPanels(){
+  const container = document.getElementById('weight-panels');
+  container.innerHTML='';
+
+  Object.entries(ROLES).forEach(([rKey, role])=>{
+    const panel = document.createElement('div');
+    panel.className='weight-panel';
+    panel.style.marginBottom='16px';
+
+    const totalPct = role.weights.reduce((a,b)=>a+b,0);
+    panel.innerHTML=`
+      <h2>${role.label}</h2>
+      <p>Adjust importance of each competency. Weights auto-normalise to 100%.</p>
+      <div class="weight-grid" id="wg-${rKey}"></div>
+      <div class="weight-total">Total: <span id="wt-${rKey}">${totalPct}%</span>
+        <button class="btn-reset" onclick="resetWeights('${rKey}')">Reset to defaults</button>
+      </div>`;
+    container.appendChild(panel);
+
+    const grid = panel.querySelector(`#wg-${rKey}`);
+    role.competencies.forEach((comp, ci)=>{
+      const item = document.createElement('div');
+      item.className='weight-item';
+      item.innerHTML=`
+        <label>${comp}</label>
+        <div class="weight-row">
+          <input type="range" min="0" max="50" step="1" value="${role.weights[ci]}"
+            id="w-${rKey}-${ci}" oninput="updateWeight('${rKey}',${ci},this.value)">
+          <span class="weight-val" id="wv-${rKey}-${ci}">${role.weights[ci]}%</span>
+        </div>`;
+      grid.appendChild(item);
+    });
+  });
+}
+
+function updateWeight(rKey, ci, val){
+  ROLES[rKey].weights[ci] = parseInt(val);
+  document.getElementById(`wv-${rKey}-${ci}`).textContent = val+'%';
+  const total = ROLES[rKey].weights.reduce((a,b)=>a+b,0);
+  document.getElementById(`wt-${rKey}`).textContent = total+'%';
+  document.getElementById(`wt-${rKey}`).style.color = Math.abs(total-100)>5 ? '#E24B4A' : 'var(--navy)';
+  // re-render guide scoring if open
+  updateGuideScoring(rKey);
+}
+
+const DEFAULT_WEIGHTS = {};
+Object.entries(ROLES).forEach(([k,r])=>{ DEFAULT_WEIGHTS[k]=[...r.weights]; });
+
+function resetWeights(rKey){
+  ROLES[rKey].weights = [...DEFAULT_WEIGHTS[rKey]];
+  ROLES[rKey].competencies.forEach((_,ci)=>{
+    document.getElementById(`w-${rKey}-${ci}`).value = ROLES[rKey].weights[ci];
+    document.getElementById(`wv-${rKey}-${ci}`).textContent = ROLES[rKey].weights[ci]+'%';
+  });
+  document.getElementById(`wt-${rKey}`).textContent = ROLES[rKey].weights.reduce((a,b)=>a+b,0)+'%';
+  document.getElementById(`wt-${rKey}`).style.color='var(--navy)';
+  updateGuideScoring(rKey);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// GUIDES PAGE
+// ══════════════════════════════════════════════════════════════════════════════
+function buildGuides(){
+  const tabBar = document.getElementById('guide-role-tabs');
+  const panels = document.getElementById('guide-panels');
+
+  Object.entries(ROLES).forEach(([rKey, role], ri)=>{
+    // Tab
+    const tab = document.createElement('button');
+    tab.className='role-tab'+(ri===0?' active':'');
+    tab.textContent=role.label;
+    tab.onclick=()=>switchGuide(rKey);
+    tab.id=`gtab-${rKey}`;
+    tabBar.appendChild(tab);
+
+    // Panel
+    const panel = document.createElement('div');
+    panel.className='guide-panel'+(ri===0?' active':'');
+    panel.id=`gpanel-${rKey}`;
+
+    // Candidate info
+    const infoHtml=`
+      <div class="cand-info-grid">
+        <div class="field"><label>Candidate name</label><input type="text" placeholder="Enter name" id="ci-name-${rKey}"></div>
+        <div class="field"><label>Interviewer</label><input type="text" placeholder="Your name" id="ci-int-${rKey}"></div>
+        <div class="field"><label>Date</label><input type="text" placeholder="MM/DD/YYYY" id="ci-date-${rKey}"></div>
+        <div class="field"><label>Round</label><input type="text" placeholder="e.g. Round 2" id="ci-round-${rKey}"></div>
+      </div>`;
+
+    // Title bar
+    const titleHtml=`
+      <div class="guide-title-bar">
+        <div class="eyebrow">Optimum · Interview Guide</div>
+        <h2>Product Manager — ${role.label}</h2>
+        <p>${role.subtitle}</p>
+      </div>`;
+
+    // Milestones
+    const milHtml=`
+      <div class="guide-section">
+        <div class="guide-section-hdr">PM Milestone Framework</div>
+        <div class="milestone-grid">
+          ${role.milestones.map(m=>`<div class="milestone-card"><strong>${m.label}</strong><span>${m.desc}</span></div>`).join('')}
+        </div>
+      </div>`;
+
+    // Questions
+    const qHtml=`
+      <div class="guide-section">
+        <div class="guide-section-hdr">Interview Questions</div>
+        ${role.qSections.map(sec=>`
+          <div class="q-section-label ${sec.tag==='ai'?'ai-label':''}">${sec.tag==='ai'?'<span style="font-size:14px">⚡</span>':''} ${sec.title}</div>
+          ${sec.qs.map(q=>`
+            <div class="q-card ${sec.tag==='ai'?'ai-card':''}">
+              <div class="q-main">${q.q}</div>
+              ${q.f?`<div class="q-probe">${q.f}</div>`:''}
+              ${q.note?`<div class="q-note">${q.note}</div>`:''}
+            </div>`).join('')}
+        `).join('')}
+      </div>`;
+
+    // Scoring
+    const totalW = role.weights.reduce((a,b)=>a+b,0);
+    const scoringHtml=`
+      <div class="guide-section" id="gs-${rKey}">
+        <div class="guide-section-hdr">Competency Scoring &nbsp;·&nbsp; 1 = No evidence &nbsp;·&nbsp; 3 = Meets bar &nbsp;·&nbsp; 5 = Exceptional</div>
+        <div class="scoring-table-wrap" id="st-${rKey}">
+          ${buildScoringTable(rKey)}
+        </div>
+      </div>`;
+
+    // Recommendation
+    const recHtml=`
+      <div class="guide-section">
+        <div class="guide-section-hdr">Hiring Recommendation</div>
+        <div class="rec-grid">
+          <div class="rec-option" id="rec-sh-${rKey}" onclick="setRec('${rKey}','Strong Hire')"><span>Strong Hire</span></div>
+          <div class="rec-option" id="rec-h-${rKey}"  onclick="setRec('${rKey}','Hire')"><span>Hire</span></div>
+          <div class="rec-option" id="rec-nh-${rKey}" onclick="setRec('${rKey}','No Hire')"><span>No Hire</span></div>
+          <div class="rec-option" id="rec-sn-${rKey}" onclick="setRec('${rKey}','Strong No Hire')"><span>Strong No Hire</span></div>
+        </div>
+        <textarea class="notes-area" placeholder="Key strengths · Concerns / gaps · Suggested next step" id="notes-${rKey}" rows="4"></textarea>
+      </div>`;
+
+    panel.innerHTML = infoHtml + titleHtml + milHtml + qHtml + scoringHtml + recHtml;
+    panels.appendChild(panel);
+  });
+}
+
+function buildScoringTable(rKey){
+  const role = ROLES[rKey];
+  const totalW = role.weights.reduce((a,b)=>a+b,0)||100;
+  const cols = `grid-template-columns: 1fr 80px 160px 60px`;
+
+  let rows = role.competencies.map((comp, ci)=>{
+    const w = role.weights[ci];
+    const normW = Math.round(w/totalW*100);
+    const score = interviewScores[rKey][ci]||0;
+    const wscore = score ? (score * normW / 5).toFixed(1) : '—';
+    const stars = [1,2,3,4,5].map(n=>`<div class="star${score>=n?' active':''}" onclick="setScore('${rKey}',${ci},${n})">${n}</div>`).join('');
+    return `<div class="st-row" id="sr-${rKey}-${ci}" style="${cols}">
+      <div class="st-competency">${comp}</div>
+      <div class="st-weight" style="text-align:center">${normW}%</div>
+      <div class="star-row">${stars}</div>
+      <div class="weighted-score-display" id="ws-${rKey}-${ci}">${wscore}</div>
+    </div>`;
+  }).join('');
+
+  // Total row
+  const totalScore = calcTotal(rKey);
+  rows += `<div class="st-row total-row" style="${cols}">
+    <div class="st-competency">Weighted Total Score</div>
+    <div></div>
+    <div></div>
+    <div class="total-score" id="ws-total-${rKey}">${totalScore}</div>
+  </div>`;
+
+  return `<div style="display:grid">
+    <div class="st-row" style="${cols};background:var(--navy);border-radius:var(--rl) var(--rl) 0 0">
+      <div style="font-size:12px;font-weight:500;color:#fff">Competency</div>
+      <div style="font-size:12px;font-weight:500;color:#8FAFD4;text-align:center">Weight</div>
+      <div style="font-size:12px;font-weight:500;color:#8FAFD4">Score (1–5)</div>
+      <div style="font-size:12px;font-weight:500;color:#8FAFD4">Wtd.</div>
+    </div>
+    ${rows}
+  </div>`;
+}
+
+function calcTotal(rKey){
+  const role = ROLES[rKey];
+  const totalW = role.weights.reduce((a,b)=>a+b,0)||100;
+  let total = 0;
+  role.competencies.forEach((_,ci)=>{
+    const score = interviewScores[rKey][ci]||0;
+    if(score){
+      const normW = role.weights[ci]/totalW;
+      total += score * normW * 20; // scale to 0-100
+    }
+  });
+  const scored = Object.keys(interviewScores[rKey]).length;
+  return scored ? total.toFixed(1) : '—';
+}
+
+function setScore(rKey, ci, val){
+  interviewScores[rKey][ci] = interviewScores[rKey][ci]===val ? 0 : val;
+  updateGuideScoring(rKey);
+}
+
+function updateGuideScoring(rKey){
+  const wrap = document.getElementById(`st-${rKey}`);
+  if(!wrap) return;
+  wrap.innerHTML = buildScoringTable(rKey);
+}
+
+function setRec(rKey, val){
+  interviewRec[rKey] = interviewRec[rKey]===val ? '' : val;
+  ['Strong Hire','Hire','No Hire','Strong No Hire'].forEach(r=>{
+    const el = document.getElementById(`rec-${r.replace(/ /g,'-').toLowerCase().replace('strong-hire','sh').replace('hire','h').replace('no-hire','nh').replace('strong-no-hire','sn')}-${rKey}`);
+    // simpler id lookup:
+  });
+  // re-render recs
+  ['sh','h','nh','sn'].forEach((code,i)=>{
+    const labels=['Strong Hire','Hire','No Hire','Strong No Hire'];
+    const el=document.getElementById(`rec-${code}-${rKey}`);
+    if(el) el.className='rec-option'+(interviewRec[rKey]===labels[i]?' selected':'');
+  });
+}
+
+function switchGuide(rKey){
+  document.querySelectorAll('.role-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.guide-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(`gtab-${rKey}`).classList.add('active');
+  document.getElementById(`gpanel-${rKey}`).classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════════════════════
+render();
+buildWeightPanels();
+buildGuides();
+</script>
+</body>
+</html>
