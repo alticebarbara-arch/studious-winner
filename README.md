@@ -1,133 +1,167 @@
 # studious-winner
 HIRING HELPER
-# Optimum PM Hiring Hub — Resume Proxy Server
+/**
+ * Optimum PM Hiring Hub — Resume Parsing Proxy Server
+ * 
+ * Holds your Anthropic API key securely server-side.
+ * Peers upload resumes through the hub HTML → this server → Claude API.
+ * 
+ * Deploy to Railway / Render / Fly.io in ~5 minutes (see README.md).
+ */
 
-This server holds your Anthropic API key securely. Your peers upload resumes
-through the hub HTML → this server → Claude API → back to the browser.
+const http = require("http");
+const https = require("https");
+const url = require("url");
 
-No npm packages required. Runs on Node.js 18+.
+const PORT = process.env.PORT || 3000;
+const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || "*"; // Set to your hub's origin in production
 
----
+// ── Startup check ─────────────────────────────────────────────────────────────
+if (!ANTHROPIC_API_KEY) {
+  console.error("❌  ANTHROPIC_API_KEY environment variable is not set.");
+  console.error("    Set it in your hosting platform's environment variables.");
+  process.exit(1);
+}
 
-## Deploy in 5 minutes — choose one platform
+// ── CORS headers ──────────────────────────────────────────────────────────────
+function setCORSHeaders(res, origin) {
+  const allow = ALLOWED_ORIGIN === "*" ? "*" : (origin || "*");
+  res.setHeader("Access-Control-Allow-Origin", allow);
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Max-Age", "86400");
+}
 
----
+// ── Read full request body ─────────────────────────────────────────────────────
+function readBody(req) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    req.on("data", chunk => chunks.push(chunk));
+    req.on("end", () => resolve(Buffer.concat(chunks)));
+    req.on("error", reject);
+  });
+}
 
-### Option A: Railway (recommended — easiest)
+// ── Forward to Anthropic API ──────────────────────────────────────────────────
+function callAnthropic(payload) {
+  return new Promise((resolve, reject) => {
+    const body = JSON.stringify(payload);
+    const options = {
+      hostname: "api.anthropic.com",
+      path: "/v1/messages",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Length": Buffer.byteLength(body),
+        "x-api-key": ANTHROPIC_API_KEY,
+        "anthropic-version": "2023-06-01",
+      },
+    };
 
-1. Go to https://railway.app and sign up (free tier available)
+    const req = https.request(options, res => {
+      const chunks = [];
+      res.on("data", chunk => chunks.push(chunk));
+      res.on("end", () => {
+        resolve({
+          status: res.statusCode,
+          body: Buffer.concat(chunks).toString(),
+        });
+      });
+    });
 
-2. Click **New Project → Deploy from GitHub repo**
-   - Push these two files (`server.js`, `package.json`) to a new GitHub repo first
-   - Or use **New Project → Empty Project → Add a Service → GitHub Repo**
+    req.on("error", reject);
+    req.write(body);
+    req.end();
+  });
+}
 
-3. In your Railway project, click your service → **Variables** tab → **Add Variable**:
-   ```
-   ANTHROPIC_API_KEY = sk-ant-your-key-here
-   ```
-   Optionally add:
-   ```
-   ALLOWED_ORIGIN = https://claude.ai
-   ```
+// ── Validate incoming payload ─────────────────────────────────────────────────
+function validatePayload(payload) {
+  if (!payload || typeof payload !== "object") return "Invalid request body";
+  if (!Array.isArray(payload.messages) || !payload.messages.length) return "Missing messages";
+  if (payload.model && !payload.model.startsWith("claude-")) return "Invalid model";
+  // Strip any api_key field if someone tries to send one
+  delete payload.api_key;
+  return null;
+}
 
-4. Railway auto-detects Node.js and runs `npm start`. Your server URL will be
-   something like: `https://optimum-resume-proxy.up.railway.app`
+// ── HTTP Server ───────────────────────────────────────────────────────────────
+const server = http.createServer(async (req, res) => {
+  const origin = req.headers.origin;
+  const { pathname } = url.parse(req.url);
 
-5. Test it:
-   ```
-   curl https://your-server.up.railway.app/health
-   ```
-   You should see: `{"ok":true,"message":"Optimum Resume Proxy is running"}`
+  // CORS preflight
+  if (req.method === "OPTIONS") {
+    setCORSHeaders(res, origin);
+    res.writeHead(204);
+    res.end();
+    return;
+  }
 
----
+  // Health check
+  if (req.method === "GET" && pathname === "/health") {
+    setCORSHeaders(res, origin);
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ ok: true, message: "Optimum Resume Proxy is running" }));
+    return;
+  }
 
-### Option B: Render (also free tier)
+  // Resume parse endpoint
+  if (req.method === "POST" && pathname === "/parse-resume") {
+    setCORSHeaders(res, origin);
 
-1. Go to https://render.com and sign up
+    // Size limit — 20MB (base64 encoded PDF/DOCX)
+    const contentLength = parseInt(req.headers["content-length"] || "0");
+    if (contentLength > 20 * 1024 * 1024) {
+      res.writeHead(413, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "File too large. Maximum size is 20MB." }));
+      return;
+    }
 
-2. Click **New → Web Service → Connect a GitHub repo**
-   (push `server.js` + `package.json` to GitHub first)
+    let payload;
+    try {
+      const raw = await readBody(req);
+      payload = JSON.parse(raw.toString());
+    } catch (e) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Invalid JSON in request body" }));
+      return;
+    }
 
-3. Settings:
-   - **Build Command**: (leave blank — no build needed)
-   - **Start Command**: `node server.js`
-   - **Instance type**: Free
+    const validationError = validatePayload(payload);
+    if (validationError) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: validationError }));
+      return;
+    }
 
-4. Under **Environment**, add:
-   ```
-   ANTHROPIC_API_KEY = sk-ant-your-key-here
-   ```
+    // Force the correct model and safe max_tokens
+    payload.model = "claude-sonnet-4-20250514";
+    payload.max_tokens = Math.min(payload.max_tokens || 1000, 1000);
 
-5. Click **Create Web Service**. Your URL will be:
-   `https://optimum-resume-proxy.onrender.com`
+    console.log(`[${new Date().toISOString()}] Parsing resume — ${payload.messages?.[0]?.content?.find?.(c => c.type === "document") ? "document" : "text"} content`);
 
-   ⚠️ Free Render instances spin down after 15 minutes of inactivity.
-   The first upload after idle will take ~30 seconds to warm up.
+    try {
+      const result = await callAnthropic(payload);
+      res.writeHead(result.status, { "Content-Type": "application/json" });
+      res.end(result.body);
+    } catch (e) {
+      console.error("Anthropic API error:", e.message);
+      res.writeHead(502, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Failed to reach Anthropic API", detail: e.message }));
+    }
+    return;
+  }
 
----
+  // 404 for everything else
+  setCORSHeaders(res, origin);
+  res.writeHead(404, { "Content-Type": "application/json" });
+  res.end(JSON.stringify({ error: "Not found. POST to /parse-resume" }));
+});
 
-### Option C: Fly.io (more control, still free for small servers)
-
-1. Install Fly CLI: https://fly.io/docs/hands-on/install-flyctl/
-
-2. In this folder, run:
-   ```bash
-   fly launch --name optimum-resume-proxy --region ewr --no-deploy
-   fly secrets set ANTHROPIC_API_KEY=sk-ant-your-key-here
-   fly deploy
-   ```
-
-3. Your URL: `https://optimum-resume-proxy.fly.dev`
-
----
-
-## Update the hub HTML
-
-Once your server is deployed, open `optimum_hiring_hub.html` and find this line
-near the bottom of the `<script>` section:
-
-```js
-const PROXY_URL = "YOUR_SERVER_URL_HERE";
-```
-
-Replace with your actual server URL:
-
-```js
-const PROXY_URL = "https://optimum-resume-proxy.up.railway.app";
-```
-
-Save and redistribute the HTML file to your team. That's it.
-
----
-
-## Security notes
-
-- Your API key never touches the browser — it lives only in the server's
-  environment variables
-- The server only accepts POST requests to `/parse-resume`
-- Set `ALLOWED_ORIGIN` to your team's domain for extra protection
-- File size is capped at 20MB per upload
-- The server forces `claude-sonnet-4-20250514` and caps `max_tokens` at 1000,
-  so peers can't abuse the key for other purposes
-
----
-
-## Environment variables
-
-| Variable | Required | Default | Description |
-|---|---|---|---|
-| `ANTHROPIC_API_KEY` | ✅ Yes | — | Your Anthropic API key |
-| `PORT` | No | `3000` | Port to listen on |
-| `ALLOWED_ORIGIN` | No | `*` | CORS origin (e.g. `https://claude.ai`) |
-
----
-
-## Local testing
-
-```bash
-ANTHROPIC_API_KEY=sk-ant-your-key node server.js
-# Server running on http://localhost:3000
-
-curl http://localhost:3000/health
-# {"ok":true,"message":"Optimum Resume Proxy is running"}
-```
+server.listen(PORT, () => {
+  console.log(`✅  Optimum Resume Proxy running on port ${PORT}`);
+  console.log(`    Health check: http://localhost:${PORT}/health`);
+  console.log(`    Parse endpoint: POST http://localhost:${PORT}/parse-resume`);
+});
